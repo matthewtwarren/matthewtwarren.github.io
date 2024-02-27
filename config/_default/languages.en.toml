@@ -3,14 +3,12 @@ languageName = "English"
 languageDirection = "ltr"
 weight = 1
 
-title = "Matt __Warren__"
+title = "Matt Warren"
 # copyright = "Copy, _right?_ :thinking_face:"
 
 [params]
   dateFormat = "2 January 2006"
-
   mainSections = ["projects", "posts"]
-  # description = "My awesome website"
 
 [params.author]
   name = "Matt Warren"

@@ -19,8 +19,7 @@
   pageRef = "projects"
 
 [[main]]
-  identifier = "search"
-  weight = 99
+  identifier = "Search"
   [main.params]
     action = "search"
 
