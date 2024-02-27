@@ -1,0 +1,40 @@
+/* Avocado scheme */
+:root {
+  --color-neutral: 255, 255, 255;
+  /* Stone */
+  --color-neutral-50: 250, 250, 249;
+  --color-neutral-100: 245, 245, 244;
+  --color-neutral-200: 231, 229, 228;
+  --color-neutral-300: 214, 211, 209;
+  --color-neutral-400: 168, 162, 158;
+  --color-neutral-500: 120, 113, 108;
+  --color-neutral-600: 87, 83, 78;
+  --color-neutral-700: 68, 64, 60;
+  --color-neutral-800: 41, 37, 36;
+  --color-neutral-900: 28, 25, 23;
+  --color-neutral-950: 12, 10, 9;
+  /* Lime - Darker Pastelle Green Shades */
+  --color-primary-50: 220, 240, 210; /* Slightly darker, more muted */
+  --color-primary-100: 200, 230, 180; /* Darker pastel shade */
+  --color-primary-200: 180, 220, 150; /* Even darker, still pastel */
+  --color-primary-300: 160, 210, 120; /* More muted, darker */
+  --color-primary-400: 140, 200, 90;  /* Dark pastel green */
+  --color-primary-500: 120, 180, 60;  /* Darker, more muted green */
+  --color-primary-600: 100, 160, 40;  /* Dark and muted */
+  --color-primary-700: 80, 140, 20;   /* Darker pastel green */
+  --color-primary-800: 60, 120, 15;   /* Very dark pastel green */
+  --color-primary-900: 40, 100, 10;   /* Deep, dark pastel green */
+  --color-primary-950: 20, 80, 5;     /* Almost earthy, very dark */
+  /* Emerald - Darker but a bit Brighter than Lime */
+  --color-secondary-50: 216, 243, 235; /* Slightly darker, but brighter than lime */
+  --color-secondary-100: 189, 240, 219; /* Darker, but with a touch of brightness */
+  --color-secondary-200: 147, 233, 198; /* Richer, slightly brighter */
+  --color-secondary-300: 90, 221, 173;  /* Darker, yet vibrant */
+  --color-secondary-400: 32, 201, 143;  /* Rich, dark shade */
+  --color-secondary-500: 0, 175, 119;   /* Darker green, still vibrant */
+  --color-secondary-600: 0, 140, 95;    /* Dark, richer green */
+  --color-secondary-700: 0, 110, 77;    /* Dark, vibrant emerald */
+  --color-secondary-800: 0, 85, 60;     /* Very dark, richer than lime */
+  --color-secondary-900: 0, 68, 49;     /* Deepest, vibrant dark green */
+  --color-secondary-950: 0, 34, 24;     /* Almost black-green, rich and dark */
+}
