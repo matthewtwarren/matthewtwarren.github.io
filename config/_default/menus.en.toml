@@ -19,9 +19,13 @@
   pageRef = "projects"
 
 [[main]]
-  identifier = "Search"
-  [main.params]
-    action = "search"
+  name = "Research"
+  pageRef = "research"
+
+# [[main]]
+#   identifier = "Search"
+#   [main.params]
+#     action = "search"
 
 # [[main]]
 #   identifier = "appearance"
