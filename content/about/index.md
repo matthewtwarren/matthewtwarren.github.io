@@ -9,9 +9,11 @@ showReadingTime: false
 Welcome to my website -- thanks for stopping by! :waving_hand:
 {{< /lead >}}
 
-My name is Matt and I'm a (Postdoctoral) Computational Researcher in the Department of Biochemistry at the [University of Oxford](www.ox.ac.uk). In collaboration with Boehringer Ingelheim, I work on developing data-driven models that predict protein-ligand binding affinities to accelerate drug discovery.  
+My name is Matt and I'm a Data Scientist working in the Centre for Cancer Drug Discovery at [The Institute of Cancer Research](https://www.icr.ac.uk) in London, UK. 
 
-Alongisde my work, I enjoy playing and mixing music, running and cycling on trails, and using technology to solve problems that make life easier and more enjoyable - check out my [projects](/projects) to see some examples of stuff I've been working on.
+I obtained my PhD in Interdisciplinary Biomedical Research from University of Warwick and undertook postdoctoral research at University of Oxford in Drug Design, in collaboration with Boehringer Ingelheim. 
+
+Alongisde my [research](/research), I enjoy playing and mixing music, running and cycling on trails, and using technology to solve problems to make life easier and more fun - check out my [projects](/projects) to see some examples of stuff I've been working on.
 
 {{< lead >}}
 

@@ -13,8 +13,8 @@ title = "Matt Warren"
 [params.author]
   name = "Matt Warren"
   image = "img/author.jpg"
-  headline = "Computational Research Scientist at University of Oxford."
-  bio = "Computational Research Scientist at University of Oxford."
+  headline = "Data Scientist at The Institute of Cancer Research."
+  bio = "Drug Discovery Data Scientist at The Institute of Cancer Research."
   links = [
   #   { email = "mailto:hello@your_domain.com" },
   #   { link = "https://link-to-some-website.com/" },
