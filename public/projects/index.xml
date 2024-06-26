@@ -2,10 +2,32 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Projects on Matt Warren</title>
-    <link>/projects/</link>
+    <link>//localhost:1313/projects/</link>
     <description>Recent content in Projects on Matt Warren</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en</language>
-    <atom:link href="/projects/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 01 Jan 2023 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/projects/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SortSpotify</title>
+      <link>//localhost:1313/projects/sort_spotify/</link>
+      <pubDate>Sun, 01 Jan 2023 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/projects/sort_spotify/</guid>
+      <description>Command-line tool for managing Spotify playlists, including filtering and sorting playlists by track tempo and key.</description>
+    </item>
+    <item>
+      <title>Monde Radio</title>
+      <link></link>
+      <pubDate>Fri, 21 May 2021 00:00:00 +0000</pubDate>
+      <guid></guid>
+      <description>A weekly radio show and collaborative project by friends wishing to share explore music from a wide range of styles and genres.</description>
+    </item>
+    <item>
+      <title>Century Science</title>
+      <link></link>
+      <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
+      <guid></guid>
+      <description>My first website &amp;ndash; a platform aimed at exploring my personal interests and ideas, and sparking conversations about science and technology.</description>
+    </item>
   </channel>
 </rss>

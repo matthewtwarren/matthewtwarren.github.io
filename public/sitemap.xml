@@ -4,26 +4,63 @@
   
     
       <url>
-            <loc>/posts/</loc>
+            <loc>//localhost:1313/</loc>
             <lastmod>2024-02-08T00:00:00+00:00</lastmod>
           </url>
     
   
     
-  
-    
       <url>
-            <loc>/</loc>
+            <loc>//localhost:1313/posts/blog_guide/</loc>
             <lastmod>2024-02-08T00:00:00+00:00</lastmod>
           </url>
     
   
     
+      <url>
+            <loc>//localhost:1313/posts/</loc>
+            <lastmod>2024-02-08T00:00:00+00:00</lastmod>
+          </url>
+    
   
     
       <url>
-            <loc>/posts/cryopreservation/</loc>
-            <lastmod>2023-08-18T20:03:07+01:00</lastmod>
+            <loc>//localhost:1313/posts/cryopreservation/</loc>
+            <lastmod>2023-08-18T00:00:00+00:00</lastmod>
+          </url>
+    
+  
+    
+      <url>
+            <loc>//localhost:1313/projects/</loc>
+            <lastmod>2023-01-01T00:00:00+00:00</lastmod>
+          </url>
+    
+  
+    
+      <url>
+            <loc>//localhost:1313/projects/sort_spotify/</loc>
+            <lastmod>2023-01-01T00:00:00+00:00</lastmod>
+          </url>
+    
+  
+    
+      <url>
+            <loc>//localhost:1313/posts/dna_storage/</loc>
+            <lastmod>2022-03-21T00:00:00+00:00</lastmod>
+          </url>
+    
+  
+    
+      <url>
+            <loc>//localhost:1313/posts/bayes_theorem/</loc>
+            <lastmod>2021-05-21T00:00:00+00:00</lastmod>
+          </url>
+    
+  
+    
+      <url>
+            <loc>//localhost:1313/about/</loc>
           </url>
     
   
@@ -31,8 +68,10 @@
   
     
       <url>
-            <loc>/projects/</loc>
+            <loc>//localhost:1313/research/</loc>
           </url>
+    
+  
     
   
 </urlset>

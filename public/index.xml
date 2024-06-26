@@ -2,18 +2,53 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Matt Warren</title>
-    <link>/</link>
+    <link>//localhost:1313/</link>
     <description>Recent content on Matt Warren</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 18 Aug 2023 20:03:07 +0100</lastBuildDate>
-    <atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 08 Feb 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Notes on this website, built using Congo and Hugo</title>
+      <link>//localhost:1313/posts/blog_guide/</link>
+      <pubDate>Thu, 08 Feb 2024 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/posts/blog_guide/</guid>
+      <description>Some important notes about this website which I&amp;rsquo;ll likely forget in the future.</description>
+    </item>
     <item>
       <title>Putting cells on ice: Science-facts not science-fiction</title>
-      <link>/posts/cryopreservation/</link>
-      <pubDate>Fri, 18 Aug 2023 20:03:07 +0100</pubDate>
-      <guid>/posts/cryopreservation/</guid>
+      <link>//localhost:1313/posts/cryopreservation/</link>
+      <pubDate>Fri, 18 Aug 2023 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/posts/cryopreservation/</guid>
       <description>Why cryopreservation matters: A researcher&amp;rsquo;s perspective</description>
+    </item>
+    <item>
+      <title>SortSpotify</title>
+      <link>//localhost:1313/projects/sort_spotify/</link>
+      <pubDate>Sun, 01 Jan 2023 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/projects/sort_spotify/</guid>
+      <description>Command-line tool for managing Spotify playlists, including filtering and sorting playlists by track tempo and key.</description>
+    </item>
+    <item>
+      <title>How DNA could solve the world&#39;s data storage problem</title>
+      <link>//localhost:1313/posts/dna_storage/</link>
+      <pubDate>Mon, 21 Mar 2022 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/posts/dna_storage/</guid>
+      <description>Data overload is a uniquely 21st century problem. Could the answer be as old as life itself?</description>
+    </item>
+    <item>
+      <title>Bayes&#39; theorem: Making sense of COVID tests</title>
+      <link>//localhost:1313/posts/bayes_theorem/</link>
+      <pubDate>Fri, 21 May 2021 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/posts/bayes_theorem/</guid>
+      <description>Understanding the 18th-century maths theorem that governs the reliability of (corona) virus testing.</description>
+    </item>
+    <item>
+      <title>About</title>
+      <link>//localhost:1313/about/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>//localhost:1313/about/</guid>
+      <description>Welcome to my website &amp;ndash; thanks for stopping by!</description>
     </item>
   </channel>
 </rss>
