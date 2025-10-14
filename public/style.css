@@ -9,6 +9,13 @@
 .container {
   max-width: 100%;
   width: 100%;
+  padding: 0;
+}
+
+.header,
+.footer {
+  width: 100%;
+  padding: 40px;
 }
 
 .lead {
@@ -60,4 +67,26 @@
 .alert--circle-xmark {
   border-left-color: #e74c3c;
   background: color-mix(in srgb, #e74c3c 12%, transparent);
+}
+
+.post-cover,
+.post-content img {
+  width: 60%;
+  max-width: 60%;
+  height: auto;
+  margin: 25px 0;
+  display: block;
+}
+
+.content {
+  width: 60%;
+  max-width: 60%;
+  padding: 40px;
+}
+
+@media (max-width: 1024px) {
+  .content {
+    width: 100%;
+    max-width: 100%;
+  }
 }
