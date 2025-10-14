@@ -27,12 +27,13 @@ This brings us back to the original question: given a positive result from an LF
 
 Named after its inventor, the 18th-century mathematician and minister Thomas Bayes, Bayes’ theorem is a method of determining the probability of an event based on the best available evidence, also known as conditional probability. It provides a way to update an existing belief, such as a prediction or theory, given new or additional information.
 
-{{< katex >}}
 The formula for Bayes’ theorem is given below, but the mathematical notation might need some explaining. \\(P\\) stands for probability, so \\(P(A)\\) represents the probability of event \\(A\\) occurring, and \\(P(B)\\) is the probability of event \\(B\\). \\(P(A | B)\\) means the conditional probability that event \\(A\\) occurs given that event \\(B\\) happened.
 
-\\(P(A | B) = \frac{P(B | A) \times P(A)}{P(B)}\\)
+{{< katex display=true >}}
+P(A | B) = \frac{P(B | A) \times P(A)}{P(B)}
+{{< /katex >}}
 
-Knowing this formula, let’s reframe our initial question in terms of events and known probabilities. We want to know the probability that someone has the disease, given a positive test result, which we can denote as P(A | B), where P(A) and P(B) are the probabilities of having the disease and getting a positive result, respectively.
+Knowing this formula, let’s reframe our initial question in terms of events and known probabilities. We want to know the probability that someone has the disease, given a positive test result, which we can denote as \\(P(A | B)\\), where \\(P(A)\\) and \\(P(B)\\) are the probabilities of having the disease and getting a positive result, respectively.
 
 We can assume the probability of having the disease, P(A), to be equal to the background rate of the disease in the population, for now let’s say 1 in 1000, or 0.001.  Here, P(A) is also called the “prior probability”. This assumption is valid given that asymptomatic testing is used to screen large numbers of people who are healthy and showing no signs of the disease.
 

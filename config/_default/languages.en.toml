@@ -4,59 +4,31 @@ languageDirection = "ltr"
 weight = 1
 
 title = "Matt Warren"
-# copyright = "Copy, _right?_ :thinking_face:"
 
 [params]
-  dateFormat = "2 January 2006"
-  mainSections = ["projects", "posts"]
+  subtitle = "Data Scientist at The Institute of Cancer Research."
+  menuMore = "More"
+  readMore = "Read more"
+  readOtherPosts = "Read other posts"
+  newerPosts = "Newer posts"
+  olderPosts = "Older posts"
+  missingContentMessage = "Page not found..."
+  missingBackButtonLabel = "Back to home page"
+  minuteReadingTime = "min read"
+  words = "words"
 
-[params.author]
-  name = "Matt Warren"
-  image = "img/author.jpg"
-  headline = "Data Scientist at The Institute of Cancer Research."
-  bio = "Drug Discovery Data Scientist at The Institute of Cancer Research."
-  links = [
-  #   { email = "mailto:hello@your_domain.com" },
-  #   { link = "https://link-to-some-website.com/" },
-  #   { amazon = "https://www.amazon.com/hz/wishlist/ls/wishlist-id" },
-  #   { apple = "https://www.apple.com" },
-  #   { blogger = "https://username.blogspot.com/" },
-  #   { codepen = "https://codepen.io/username" },
-  #   { dev = "https://dev.to/username" },
-  #   { discord = "https://discord.gg/invitecode" },
-  #   { dribbble = "https://dribbble.com/username" },
-  #   { facebook = "https://facebook.com/username" },
-  #   { flickr = "https://www.flickr.com/photos/username/" },
-  #   { foursquare = "https://foursquare.com/username" },
-    { github = "https://github.com/matthewtwarren" },
-  #   { gitlab = "https://gitlab.com/username" },
-  #   { google = "https://www.google.com/" },
-  #   { google-scholar = "https://scholar.google.com/citations?user=user-id" },
-  #   { hashnode = "https://username.hashnode.dev" },
-  #   { instagram = "https://instagram.com/username" },
-  #   { keybase = "https://keybase.io/username" },
-  #   { kickstarter = "https://www.kickstarter.com/profile/username" },
-  #   { lastfm = "https://lastfm.com/user/username" },
-     { linkedin = "https://linkedin.com/in/matthewtwarren" },
-  #   { mastodon = "https://mastodon.instance/@username" },
-  #   { medium = "https://medium.com/username" },
-  #   { mendeley = "https://www.mendeley.com/" },
-  #   { microsoft = "https://www.microsoft.com/" },
-  #   { orcid = "https://orcid.org/userid" },
-  #   { patreon = "https://www.patreon.com/username" },
-  #   { pinterest = "https://pinterest.com/username" },
-  #   { reddit = "https://reddit.com/user/username" },
-  #   { researchgate = "https://www.researchgate.net/profile/username" },
-  #   { slack = "https://workspace.url/team/userid" },
-  #   { snapchat = "https://snapchat.com/add/username" },
-  #   { soundcloud = "https://soundcloud.com/username" },
-  #   { stack-overflow = "https://stackoverflow.com/users/userid/username" },
-  #   { steam = "https://steamcommunity.com/profiles/userid" },
-  #   { telegram = "https://t.me/username" },
-  #   { tiktok = "https://tiktok.com/@username" },
-  #   { tumblr = "https://username.tumblr.com" },
-  #   { twitch = "https://twitch.tv/username" },
-  #   { whatsapp = "https://wa.me/phone-number" },
-     { x-twitter = "https://twitter.com/matthewthwarren" },
-  #   { youtube = "https://youtube.com/username" },
-  ]
+  [params.logo]
+    logoText = "Matt Warren"
+    logoHomeLink = "/"
+
+  [[params.social]]
+    name = "github"
+    url = "https://github.com/matthewtwarren"
+
+  [[params.social]]
+    name = "linkedin"
+    url = "https://linkedin.com/in/matthewtwarren"
+
+  [[params.social]]
+    name = "x-twitter"
+    url = "https://twitter.com/matthewthwarren"

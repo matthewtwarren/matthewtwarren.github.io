@@ -1,0 +1,11 @@
+{{- $scratch := .Page.Scratch -}}
+{{- if not ($scratch.Get "katexLoaded") -}}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-skAcpIdS7Uc9wh/1G0O1B4nsI77Yyt+koS1cEkv2n0Bw6tCeT9HM5VFrRg2d6gK2" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-srBG7xZJXx0ULY4E/KnE6oAAbmzC227EbasQMziUy/icKshFqPr+S1IbQqJ1m/8z" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-mll67QQypxt7mMKCemIWv3E+E1uVSeDkrs+6U8Ikk72LaXjJyVk0V8A+N9Plh+GI" crossorigin="anonymous"
+    onload="renderMathInElement(document.body, {delimiters: [{left: '\\\\[', right: '\\\\]', display: true}, {left: '\\\\(', right: '\\\\)', display: false}]});"></script>
+  {{- $scratch.Set "katexLoaded" true -}}
+{{- end -}}
+<div class="katex-block{{ with .Get "display" }} katex-block--display{{ end }}">
+  {{ .Inner | markdownify }}
+</div>

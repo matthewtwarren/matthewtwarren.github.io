@@ -4,17 +4,10 @@
     <title>Matt Warren</title>
     <link>//localhost:1313/</link>
     <description>Recent content on Matt Warren</description>
-    <generator>Hugo</generator>
+    <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Thu, 08 Feb 2024 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 18 Aug 2023 00:00:00 +0000</lastBuildDate>
     <atom:link href="//localhost:1313/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Notes on this website, built using Congo and Hugo</title>
-      <link>//localhost:1313/posts/blog_guide/</link>
-      <pubDate>Thu, 08 Feb 2024 00:00:00 +0000</pubDate>
-      <guid>//localhost:1313/posts/blog_guide/</guid>
-      <description>Some important notes about this website which I&amp;rsquo;ll likely forget in the future.</description>
-    </item>
     <item>
       <title>Putting cells on ice: Science-facts not science-fiction</title>
       <link>//localhost:1313/posts/cryopreservation/</link>

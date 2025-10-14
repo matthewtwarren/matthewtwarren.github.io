@@ -1,8 +1,10 @@
 # -- Site Configuration --
-theme = "congo"
+theme = "terminal"
 
 # baseURL = "https://matthewtwarren.github.io/"
 defaultContentLanguage = "en"
+
+pagination.pagerSize = 5
 
 enableRobotsTXT = true
 paperSize = 10

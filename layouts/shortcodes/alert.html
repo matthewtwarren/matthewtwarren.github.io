@@ -1,0 +1,22 @@
+{{- $variant := "circle-info" -}}
+{{- if gt (len .Params) 0 -}}
+  {{- $variant = index .Params 0 -}}
+{{- end -}}
+{{- $icon := "" -}}
+{{- if eq $variant "circle-info" -}}
+  {{- $icon = "ℹ️" -}}
+{{- else if eq $variant "triangle-exclamation" -}}
+  {{- $icon = "⚠️" -}}
+{{- else if eq $variant "circle-check" -}}
+  {{- $icon = "✅" -}}
+{{- else if eq $variant "circle-xmark" -}}
+  {{- $icon = "⛔️" -}}
+{{- end -}}
+<div class="alert alert--{{ $variant }}">
+  {{- if $icon -}}
+    <span class="alert__icon" aria-hidden="true">{{ $icon }}</span>
+  {{- end -}}
+  <div class="alert__content">
+    {{- .Inner | markdownify -}}
+  </div>
+</div>
