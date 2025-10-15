@@ -1,0 +1,92 @@
+/* Custom styles to complement the Terminal theme */
+
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+  --accent: #002b8a;
+}
+
+.container {
+  max-width: 100%;
+  width: 100%;
+  padding: 0;
+}
+
+.header,
+.footer {
+  width: 100%;
+  padding: 40px;
+}
+
+.lead {
+  font-size: 1.15rem;
+  line-height: 1.6;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+}
+
+.katex-block {
+  margin: 1.5rem 0;
+}
+
+.alert {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-left: 4px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border-radius: var(--radius);
+}
+
+.alert__icon {
+  font-size: 1.5rem;
+  line-height: 1;
+  margin-top: 0.1rem;
+}
+
+.alert__content > :first-child {
+  margin-top: 0;
+}
+
+.alert__content > :last-child {
+  margin-bottom: 0;
+}
+
+.alert--triangle-exclamation {
+  border-left-color: #f39c12;
+  background: color-mix(in srgb, #f39c12 12%, transparent);
+}
+
+.alert--circle-check {
+  border-left-color: #4caf50;
+  background: color-mix(in srgb, #4caf50 12%, transparent);
+}
+
+.alert--circle-xmark {
+  border-left-color: #e74c3c;
+  background: color-mix(in srgb, #e74c3c 12%, transparent);
+}
+
+.post-cover,
+.post-content img {
+  width: 60%;
+  max-width: 60%;
+  height: auto;
+  margin: 25px 0;
+  display: block;
+}
+
+.content {
+  width: 60%;
+  max-width: 60%;
+  padding: 40px;
+}
+
+@media (max-width: 1024px) {
+  .content {
+    width: 100%;
+    max-width: 100%;
+  }
+}
