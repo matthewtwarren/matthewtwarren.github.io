@@ -11,4 +11,4 @@ paperSize = 10
 summaryLength = 0
 
 [outputs]
-  home = ["HTML", "RSS", "JSON"]
+  home = ["HTML", "RSS"]
