@@ -78,15 +78,14 @@
   display: block;
 }
 
-/* Utility classes for overriding default image width */
-.post-content img.large { /* occupy full text column */
-  width: 80% !important;
-  max-width: 80% !important;
+.post-content img.large {
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .content {
-  width: 60%;
-  max-width: 60%;
+  width: 70%;
+  max-width: 70%;
   padding: 40px;
 }
 
