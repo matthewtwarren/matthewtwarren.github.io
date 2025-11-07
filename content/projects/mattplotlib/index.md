@@ -1,7 +1,7 @@
 ---
 title: "mattplotlib"
 date: 2025-11-07
-summary: "`mattplotlib` - a set of Python plotting helpers, stylers and custom plots. 
+summary: "mattplotlib - my personal set of Python plotting helpers, stylers and custom plots. 
 showDate: true
 showReadingTime: false
 showTableOfContents: false
