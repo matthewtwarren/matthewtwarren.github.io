@@ -17,6 +17,6 @@ As a visual thinker, I'm also guilty of spending a bit too much time tweaking th
 
 I've also included a few of my favourite plots, wrapped up in easy-to-use functions, that elevate standard chart types and provide alternatives to the usual bar/line/pie charts, like the nested donut chart below. I'll be adding more styles over time.
 
-For more details and to try it out youreself, check out the [GitHub repository](https://github.com/matthewtwarren/mattplotlib), which includes a demo notebook with examples.
+For more details and to try it out yourself, check out the [GitHub repository](https://github.com/matthewtwarren/mattplotlib), which includes a demo notebook with examples.
 
 <img src="./thumb.png" alt="Nested donut chart example" class="large" />
