@@ -19,4 +19,4 @@ I've also included a few of my favourite plots, wrapped up in easy-to-use functi
 
 For more details and to try it out youreself, check out the [GitHub repository](https://github.com/matthewtwarren/mattplotlib), which includes a demo notebook with examples.
 
-<img src="./thumb.png" alt="Nested donut chart example" class="full-bleed" />
+<img src="./thumb.png" alt="Nested donut chart example" class="large" />
