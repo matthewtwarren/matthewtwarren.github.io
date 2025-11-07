@@ -80,8 +80,8 @@
 
 /* Utility classes for overriding default image width */
 .post-content img.large { /* occupy full text column */
-  width: 70% !important;
-  max-width: 70% !important;
+  width: 80% !important;
+  max-width: 80% !important;
 }
 
 .content {
