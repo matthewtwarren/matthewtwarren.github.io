@@ -11,6 +11,8 @@ layout: "simple"
 
 My research interests lie in developing data-driven methods and models to accelerate drug discovery. Currently, this is focussed on identifying new drug targets and molecules for cancer therapies via targeted protein degradation.
 
+---
+
 ## Publications
 
 - **Warren, M.T.** & Valsson, I., Deane, C.M., Magarkar, A., Morris, G.M. and Biggin, P.C. (2025). Narrowing the gap between machine learning scoring functions and free energy perturbation using augmented data. _Communications Chemistry_ 8(1), 41. [doi.org/10.1038/s42004-025-01428-y](https://doi.org/10.1038/s42004-025-01428-y)
@@ -23,6 +25,8 @@ My research interests lie in developing data-driven methods and models to accele
 {{< alert "circle-info" >}}
 For a detailed list of publications see my [Google Scholar](https://scholar.google.com/citations?user=28CgdpoAAAAJ&hl=en) or [ORCID](https://orcid.org/0000-0002-5860-7468) profile.
 {{< /alert >}}
+
+---
 
 ## PhD Thesis
 
