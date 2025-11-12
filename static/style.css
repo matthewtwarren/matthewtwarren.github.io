@@ -78,9 +78,10 @@
   display: block;
 }
 
-.post-content img.large {
-  width: 100% !important;
-  max-width: 100% !important;
+/* Utility classes for overriding default image width */
+.post-content img.large { /* occupy full text column */
+  width: 90% !important;
+  max-width: 90% !important;
 }
 
 .content {
