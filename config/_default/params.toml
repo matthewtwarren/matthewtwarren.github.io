@@ -28,6 +28,6 @@ dateFormat = "2 January 2006"
   # pinterest = ""
   # yandex = ""
 
-# Social media profiles
-socialGithub = "matthewtwarren"
-socialLinkedin = "matthewtwarren"
+[social]
+  github = "matthewtwarren"
+  linkedin = "matthewtwarren"
