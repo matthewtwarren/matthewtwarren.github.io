@@ -1,4 +1,26 @@
 html {
     font-size: 12pt;
   }
+
+/* Social Icons */
+.social-icons {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.social-icons a:hover {
+  opacity: 0.7;
+}
+
+.social-icons svg {
+  display: block;
+}
   
