@@ -7,6 +7,8 @@
  * fetch/auto-init logic so a future upload tool can reuse the same engine.
  */
 
+import { openPoster } from "./gpxposter.js";
+
 var ELEVATION_THRESHOLD = 3; // metres; smooths GPS noise out of ascent totals
 
 /* -- Parsing ------------------------------------------------------------- */
@@ -211,10 +213,8 @@ function renderMap(mapEl, points, stats, accent) {
   L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", {
     maxZoom: 17,
     attribution:
-      'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> ' +
-      'contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | ' +
-      'Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> ' +
-      '(<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>, ' +
+      '<a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)'
   }).addTo(map);
 
   // White casing beneath the accent line for the "poster" look.
@@ -249,11 +249,13 @@ function renderRoute(figureEl, gpxText) {
   var date = stats.startTime || fallback.date;
   var title = parsed.name || fallback.title;
 
+  var chips = buildStats(stats, date);
+
   var titleEl = figureEl.querySelector(".gpxmap__title");
   if (titleEl) titleEl.textContent = title;
 
   var statsEl = figureEl.querySelector(".gpxmap__stats");
-  if (statsEl) renderStats(statsEl, buildStats(stats, date));
+  if (statsEl) renderStats(statsEl, chips);
 
   var accent = accentColour(figureEl);
   var mapEl = figureEl.querySelector(".gpxmap__map");
@@ -264,6 +266,27 @@ function renderRoute(figureEl, gpxText) {
   if (wantProfile && stats.hasEle && profileEl) {
     renderProfile(profileEl, parsed.points, stats);
   }
+
+  // Stash everything the poster needs so it renders with no re-parse.
+  figureEl._walk = {
+    coordinates: parsed.points.map(function (p) { return [p.lon, p.lat]; }),
+    title: title,
+    chips: chips,
+    accent: accent,
+    elevation: stats.hasEle
+      ? parsed.points.map(function (p, i) { return [stats.cumulative[i], p.ele]; })
+      : null
+  };
+  enablePoster(figureEl);
+}
+
+function enablePoster(figureEl) {
+  var btn = figureEl.querySelector(".gpxmap__poster-btn");
+  if (!btn) return;
+  btn.disabled = false;
+  btn.addEventListener("click", function () {
+    if (figureEl._walk) openPoster(figureEl._walk);
+  });
 }
 
 /* -- Auto-init ----------------------------------------------------------- */
