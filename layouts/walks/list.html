@@ -1,0 +1,43 @@
+{{ define "main" }}
+  {{ with .Content }}
+    <div class="index-content">
+      {{ . }}
+    </div>
+  {{ end }}
+
+  {{ $profile := $.Site.Params.walks.elevationProfile | default true }}
+  {{ $gpx := sort (.Resources.Match "*.gpx") "Name" "desc" }}
+
+  <div class="walks">
+    {{ range $gpx }}
+      <figure class="gpxmap"
+              data-gpx="{{ .RelPermalink }}"
+              data-name="{{ .Name }}"
+              data-profile="{{ $profile }}"
+              style="--gpxmap-height: 380px;">
+        <div class="gpxmap__map" role="img" aria-label="Walk route map"></div>
+        <figcaption class="gpxmap__meta">
+          <span class="gpxmap__title"></span>
+          <ul class="gpxmap__stats"></ul>
+          <div class="gpxmap__profile" hidden></div>
+        </figcaption>
+      </figure>
+    {{ else }}
+      <p>No walks yet — check back soon.</p>
+    {{ end }}
+  </div>
+
+  {{/* Load the map assets once, only on pages that actually have a GPX card. */}}
+  {{ if $gpx }}
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin="anonymous">
+    <script defer
+            src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin="anonymous"></script>
+    {{ $gpxmap := resources.Get "js/gpxmap.js" | js.Build | minify | fingerprint }}
+    <script defer src="{{ $gpxmap.RelPermalink }}"></script>
+  {{ end }}
+{{ end }}

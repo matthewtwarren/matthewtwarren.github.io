@@ -22,6 +22,10 @@
   name = "Research"
   pageRef = "research"
 
+[[main]]
+  name = "Walks"
+  pageRef = "walks"
+
 # [[main]]
 #   identifier = "Search"
 #   [main.params]

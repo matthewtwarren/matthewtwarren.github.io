@@ -13,6 +13,12 @@ Toc = false
 TocTitle = "Table of Contents"
 dateFormat = "2 January 2006"
 
+# -- Walks --
+# Options for the GPX walks section.
+
+[walks]
+  elevationProfile = true
+
 [twitter]
   # creator = ""
   # site = ""
