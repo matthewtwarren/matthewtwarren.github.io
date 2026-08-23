@@ -44,6 +44,8 @@ and CSS use two-space indent. Keep CSS in `static/style.css`, grouped by compone
 
 Shortcodes live in `layouts/shortcodes/`: `lead`, `alert`, `katex`, `youtube_caption`.
 
+Commit messages are brief: a one-line imperative subject, no body.
+
 ## Notes
 
 - Theme overrides shadow theme files by path. Copy the file from `themes/terminal/layouts/`
