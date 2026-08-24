@@ -20,18 +20,81 @@ var OFM_SOURCE = "https://tiles.openfreemap.org/planet";
 var DEM_TILES = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
 var ATTRIBUTION = "Map data © OpenStreetMap contributors, © OpenMapTiles";
 
-// Flat "poster" palette — warm paper with terracotta buildings, à la prettymapp.
-var C = {
-  paper: "#f2e8d2",
-  water: "#a4c2d4",
-  green: "#cbd6a6",
-  park: "#b6cf96",
-  building: "#c96a4f",
-  buildingLine: "#b25b42",
-  roadMajor: "#43403b",
-  roadMinor: "#8a8175",
-  contour: "#a9713f"
+// Poster colour themes (single-word). Each defines the flat map palette, the
+// hillshade tint, the contour colour, and the route colours.
+var THEMES = {
+  paper: {
+    bg: "#f2e8d2", water: "#a4c2d4", green: "#cbd6a6", park: "#b6cf96",
+    greenOpacity: 0.55, parkOpacity: 0.55,
+    building: "#c96a4f", buildingLine: "#b25b42",
+    roadMajor: "#43403b", roadMinor: "#8a8175",
+    contour: "#a9713f", contourOpacity: 0.45,
+    hillshade: { ex: 0.5, shadow: "#5a4c34", highlight: "#ffffff", accent: "#9c8a63" },
+    route: "#002b8a", routeCasing: "#ffffff"
+  },
+  dark: {
+    bg: "#1b2330", water: "#26364a", green: "#2b3a33", park: "#33472f",
+    greenOpacity: 0.6, parkOpacity: 0.6,
+    building: "#46505f", buildingLine: "#2b3440",
+    roadMajor: "#7f8a9c", roadMinor: "#454f5c",
+    contour: "#5b6a7c", contourOpacity: 0.4,
+    hillshade: { ex: 0.55, shadow: "#0d1219", highlight: "#3c4a5e", accent: "#263041" },
+    route: "#f2b53c", routeCasing: "#11161f"
+  },
+  vivid: {
+    bg: "#eef3e2", water: "#4a9fd6", green: "#8cc35f", park: "#6cbf52",
+    greenOpacity: 0.78, parkOpacity: 0.78,
+    building: "#ec5f36", buildingLine: "#c9421f",
+    roadMajor: "#35332f", roadMinor: "#7a756c",
+    contour: "#b3641f", contourOpacity: 0.55,
+    hillshade: { ex: 0.75, shadow: "#4a3a24", highlight: "#ffffff", accent: "#a07b45" },
+    route: "#0f3aa0", routeCasing: "#ffffff"
+  },
+  // Topography-first: strong shaded relief, bold + dense contours, muted
+  // natural landcover and understated roads/buildings so terrain reads first.
+  relief: {
+    bg: "#ece5d6", water: "#9dbfce", green: "#bcc9a3", park: "#aac088",
+    greenOpacity: 0.42, parkOpacity: 0.45,
+    building: "#bfa98e", buildingLine: "#a58f72",
+    roadMajor: "#6a6255", roadMinor: "#9d9482",
+    contour: "#7d5a34", contourOpacity: 0.7, contourWidth: 1.4,
+    contourThresholds: { 10: [100, 500], 11: [50, 250], 12: [25, 100], 13: [10, 50], 14: [10, 50], 15: [10, 50] },
+    hillshade: { ex: 0.95, shadow: "#463724", highlight: "#fffaf0", accent: "#8a7048" },
+    route: "#bd3b2f", routeCasing: "#ffffff"
+  },
+  // Dark counterpart to Relief: shaded relief and bold contours on dark slate.
+  slate: {
+    bg: "#20262e", water: "#2b3947", green: "#2c352f", park: "#31402f",
+    greenOpacity: 0.4, parkOpacity: 0.45,
+    building: "#3c444d", buildingLine: "#2a3038",
+    roadMajor: "#7a828d", roadMinor: "#454c55",
+    contour: "#8a9aa6", contourOpacity: 0.5, contourWidth: 1.4,
+    contourThresholds: { 10: [100, 500], 11: [50, 250], 12: [25, 100], 13: [10, 50], 14: [10, 50], 15: [10, 50] },
+    hillshade: { ex: 1.0, shadow: "#0d1217", highlight: "#586773", accent: "#333d48" },
+    route: "#f0a93a", routeCasing: "#141a20"
+  }
 };
+
+var ROUTE_WIDTHS = { thin: 0.7, medium: 1, thick: 1.4 };
+var FONT_SCALES = { small: 0.85, medium: 1, large: 1.2 };
+
+var SETTINGS = { theme: "paper", route: "medium", font: "medium" };
+var SETTINGS_KEY = "gpxposter:settings";
+
+(function loadSettings() {
+  try {
+    var s = JSON.parse(localStorage.getItem(SETTINGS_KEY) || "{}");
+    if (THEMES[s.theme]) SETTINGS.theme = s.theme;
+    if (ROUTE_WIDTHS[s.route]) SETTINGS.route = s.route;
+    if (FONT_SCALES[s.font]) SETTINGS.font = s.font;
+  } catch (e) { /* keep defaults */ }
+})();
+
+function saveSettings() {
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(SETTINGS)); } catch (e) { /* ignore */ }
+}
+
+function theme() { return THEMES[SETTINGS.theme]; }
 
 function loadScript(src, sri, css) {
   return new Promise(function (resolve, reject) {
@@ -114,7 +177,10 @@ function lineWidth(base) {
   return ["interpolate", ["linear"], ["zoom"], 8, base * 0.5, 13, base, 16, base * 2];
 }
 
-function flatStyle(coordinates, accent) {
+function flatStyle(coordinates) {
+  var t = theme();
+  var rw = ROUTE_WIDTHS[SETTINGS.route] || 1;
+
   var sources = {
     openmaptiles: { type: "vector", url: OFM_SOURCE },
     route: routeFeature(coordinates),
@@ -125,25 +191,25 @@ function flatStyle(coordinates, accent) {
   };
 
   var layers = [
-    { id: "bg", type: "background", paint: { "background-color": C.paper } },
+    { id: "bg", type: "background", paint: { "background-color": t.bg } },
     { id: "landcover", type: "fill", source: "openmaptiles", "source-layer": "landcover",
-      paint: { "fill-color": C.green, "fill-opacity": 0.55 } },
+      paint: { "fill-color": t.green, "fill-opacity": t.greenOpacity } },
     { id: "landuse", type: "fill", source: "openmaptiles", "source-layer": "landuse",
-      paint: { "fill-color": C.green, "fill-opacity": 0.4 } },
+      paint: { "fill-color": t.green, "fill-opacity": t.greenOpacity * 0.72 } },
     { id: "park", type: "fill", source: "openmaptiles", "source-layer": "park",
-      paint: { "fill-color": C.park, "fill-opacity": 0.55 } },
+      paint: { "fill-color": t.park, "fill-opacity": t.parkOpacity } },
     // Shaded relief over the vegetation for topographic depth.
     { id: "hillshade", type: "hillshade", source: "dem",
       paint: {
-        "hillshade-exaggeration": 0.5,
-        "hillshade-shadow-color": "#5a4c34",
-        "hillshade-highlight-color": "#ffffff",
-        "hillshade-accent-color": "#9c8a63"
+        "hillshade-exaggeration": t.hillshade.ex,
+        "hillshade-shadow-color": t.hillshade.shadow,
+        "hillshade-highlight-color": t.hillshade.highlight,
+        "hillshade-accent-color": t.hillshade.accent
       } },
     { id: "water", type: "fill", source: "openmaptiles", "source-layer": "water",
-      paint: { "fill-color": C.water } },
+      paint: { "fill-color": t.water } },
     { id: "waterway", type: "line", source: "openmaptiles", "source-layer": "waterway",
-      paint: { "line-color": C.water, "line-width": lineWidth(1.2) } }
+      paint: { "line-color": t.water, "line-width": lineWidth(1.2) } }
   ];
 
   // Contour lines (best-effort — only if mlcontour set up).
@@ -152,16 +218,18 @@ function flatStyle(coordinates, accent) {
       type: "vector",
       maxzoom: 15,
       tiles: [demSource.contourProtocolUrl({
-        thresholds: { 10: [100, 500], 11: [100, 500], 12: [50, 250], 13: [25, 100], 14: [10, 50], 15: [10, 50] },
+        thresholds: t.contourThresholds ||
+          { 10: [100, 500], 11: [100, 500], 12: [50, 250], 13: [25, 100], 14: [10, 50], 15: [10, 50] },
         contourLayer: "contours", elevationKey: "ele", levelKey: "level"
       })]
     };
+    var cw = t.contourWidth || 1;
     layers.push({
       id: "contours", type: "line", source: "contours", "source-layer": "contours",
       paint: {
-        "line-color": C.contour,
-        "line-opacity": 0.45,
-        "line-width": ["match", ["get", "level"], 1, 1.3, 0.6]
+        "line-color": t.contour,
+        "line-opacity": t.contourOpacity,
+        "line-width": ["match", ["get", "level"], 1, 1.3 * cw, 0.6 * cw]
       }
     });
   }
@@ -169,18 +237,18 @@ function flatStyle(coordinates, accent) {
   layers.push(
     { id: "roads-minor", type: "line", source: "openmaptiles", "source-layer": "transportation",
       filter: ["!in", "class", "motorway", "trunk", "primary"],
-      paint: { "line-color": C.roadMinor, "line-width": lineWidth(0.8) } },
+      paint: { "line-color": t.roadMinor, "line-width": lineWidth(0.8) } },
     { id: "roads-major", type: "line", source: "openmaptiles", "source-layer": "transportation",
       filter: ["in", "class", "motorway", "trunk", "primary", "secondary"],
-      paint: { "line-color": C.roadMajor, "line-width": lineWidth(1.6) } },
+      paint: { "line-color": t.roadMajor, "line-width": lineWidth(1.6) } },
     { id: "building", type: "fill", source: "openmaptiles", "source-layer": "building",
-      paint: { "fill-color": C.building, "fill-outline-color": C.buildingLine } },
+      paint: { "fill-color": t.building, "fill-outline-color": t.buildingLine } },
     { id: "route-casing", type: "line", source: "route",
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": "#ffffff", "line-width": lineWidth(5) } },
+      paint: { "line-color": t.routeCasing, "line-width": lineWidth(5 * rw) } },
     { id: "route", type: "line", source: "route",
       layout: { "line-cap": "round", "line-join": "round" },
-      paint: { "line-color": accent, "line-width": lineWidth(3) } }
+      paint: { "line-color": t.route, "line-width": lineWidth(3 * rw) } }
   );
 
   return { version: 8, sources: sources, layers: layers };
@@ -263,36 +331,77 @@ function drawProfile(ctx, elevation, x, y, w, h, font, labelPx) {
   ctx.restore();
 }
 
-// Draw the profile + title + stats + discreet credit onto a canvas sized W×H.
+// Greedy word-wrap to fit maxWidth (ctx.font must be set before calling).
+function wrapText(ctx, text, maxWidth) {
+  var words = (text || "").split(/\s+/).filter(Boolean);
+  var lines = [], line = "";
+  words.forEach(function (word) {
+    var test = line ? line + " " + word : word;
+    if (line && ctx.measureText(test).width > maxWidth) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = test;
+    }
+  });
+  if (line) lines.push(line);
+  return lines.length ? lines : [""];
+}
+
+// Draw the title + stats + profile + discreet credit onto a canvas sized W×H.
+// The block is bottom-anchored and grows upward, so wrapped titles never clip.
 function drawLabel(ctx, walk, W, H) {
   var font = siteFont();
-  var grad = ctx.createLinearGradient(0, H * 0.55, 0, H);
-  grad.addColorStop(0, "rgba(20,18,16,0)");
-  grad.addColorStop(1, "rgba(20,18,16,0.75)");
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, Math.round(H * 0.55), W, Math.round(H * 0.45));
-
+  var fs = FONT_SCALES[SETTINGS.font] || 1;
   var padX = Math.round(W * 0.065);
+  var maxW = W - 2 * padX;
+
+  var grad = ctx.createLinearGradient(0, H * 0.5, 0, H);
+  grad.addColorStop(0, "rgba(20,18,16,0)");
+  grad.addColorStop(1, "rgba(20,18,16,0.8)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, Math.round(H * 0.5), W, Math.round(H * 0.5));
+
+  ctx.textAlign = "left";
   ctx.textBaseline = "alphabetic";
 
+  var titlePx = Math.round(W * 0.058 * fs);
+  ctx.font = "700 " + titlePx + "px " + font;
+  var titleLines = wrapText(ctx, walk.title || "", maxW);
+  var titleLH = Math.round(titlePx * 1.16);
+
+  var statsPx = Math.round(W * 0.032 * fs);
+  ctx.font = "500 " + statsPx + "px " + font;
+  var statsLines = wrapText(ctx, statsLine(walk), maxW);
+  var statsLH = Math.round(statsPx * 1.3);
+
+  var profileH = walk.elevation ? Math.round(H * 0.062) : 0;
+  var gap1 = Math.round(H * 0.006);
+  var gap2 = Math.round(H * 0.02);
+
+  var totalH = titleLines.length * titleLH + gap1 + statsLines.length * statsLH +
+    (profileH ? gap2 + profileH : 0);
+  var y = Math.round(H * 0.955) - totalH;
+
   ctx.fillStyle = "#ffffff";
-  ctx.font = "700 " + Math.round(W * 0.058) + "px " + font;
-  ctx.fillText(walk.title || "", padX, Math.round(H * 0.83));
+  ctx.font = "700 " + titlePx + "px " + font;
+  titleLines.forEach(function (ln) { y += titleLH; ctx.fillText(ln, padX, y); });
 
+  y += gap1;
   ctx.fillStyle = "rgba(255,255,255,0.88)";
-  ctx.font = "500 " + Math.round(W * 0.032) + "px " + font;
-  ctx.fillText(statsLine(walk), padX, Math.round(H * 0.875));
+  ctx.font = "500 " + statsPx + "px " + font;
+  statsLines.forEach(function (ln) { y += statsLH; ctx.fillText(ln, padX, y); });
 
-  if (walk.elevation) {
-    drawProfile(ctx, walk.elevation, padX, Math.round(H * 0.895),
-      W - 2 * padX, Math.round(H * 0.062), font, Math.round(W * 0.02));
+  if (profileH) {
+    y += gap2;
+    drawProfile(ctx, walk.elevation, padX, y, maxW, profileH, font, Math.round(W * 0.02 * fs));
   }
 
   // Discreet, licence-required credit.
   ctx.fillStyle = "rgba(255,255,255,0.4)";
   ctx.font = "400 " + Math.round(W * 0.016) + "px " + font;
   ctx.textAlign = "right";
-  ctx.fillText("© OpenStreetMap · OpenMapTiles", W - padX, H - Math.round(H * 0.012));
+  ctx.fillText("© OpenStreetMap · OpenMapTiles", W - padX, H - Math.round(H * 0.014));
   ctx.textAlign = "left";
 }
 
@@ -323,7 +432,7 @@ function exportPoster(walk, onDone) {
 
   var map = new maplibregl.Map({
     container: host,
-    style: flatStyle(walk.coordinates, walk.accent),
+    style: flatStyle(walk.coordinates),
     interactive: false,
     attributionControl: false,
     preserveDrawingBuffer: true,
@@ -378,7 +487,13 @@ function buildModal() {
     '    </div>' +
     '    <div class="gpxposter__credit">© OpenStreetMap · OpenMapTiles</div>' +
     '  </div>' +
+    '  <div class="gpxposter__settings" hidden>' +
+    settingRow("Theme", "theme", [["paper", "Paper"], ["dark", "Dark"], ["vivid", "Vivid"], ["relief", "Relief"], ["slate", "Slate"]]) +
+    settingRow("Line", "route", [["thin", "Thin"], ["medium", "Medium"], ["thick", "Thick"]]) +
+    settingRow("Font", "font", [["small", "S"], ["medium", "M"], ["large", "L"]]) +
+    '  </div>' +
     '  <div class="gpxposter__controls">' +
+    '    <button type="button" class="gpxposter__btn gpxposter__btn--ghost" data-action="settings">Style</button>' +
     '    <button type="button" class="gpxposter__btn" data-action="download">Download</button>' +
     '    <button type="button" class="gpxposter__btn" data-action="caption">Copy caption</button>' +
     '    <button type="button" class="gpxposter__btn gpxposter__btn--ghost" data-action="close">Close</button>' +
@@ -386,6 +501,16 @@ function buildModal() {
     '</div>';
   document.body.appendChild(el);
   return el;
+}
+
+function settingRow(label, setting, options) {
+  var btns = options.map(function (o) {
+    return '<button type="button" class="gpxposter__seg-btn" data-setting="' + setting +
+      '" data-value="' + o[0] + '">' + o[1] + '</button>';
+  }).join("");
+  return '<div class="gpxposter__setrow">' +
+    '<span class="gpxposter__setlabel">' + label + '</span>' +
+    '<div class="gpxposter__seg">' + btns + '</div></div>';
 }
 
 function closeModal() {
@@ -400,32 +525,15 @@ function onKeydown(e) {
   if (e.key === "Escape") closeModal();
 }
 
-function openPoster(walk) {
-  if (!walk || !walk.coordinates || walk.coordinates.length < 2) return;
-  if (!modal) {
-    modal = buildModal();
-    modal.addEventListener("click", function (e) {
-      var action = e.target.getAttribute("data-action");
-      if (action === "close") closeModal();
-      else if (action === "download") handleDownload(e.target);
-      else if (action === "caption") handleCaption(e.target);
-    });
-  }
-
-  modal._walk = walk;
-  modal.querySelector(".gpxposter__title").textContent = walk.title || "";
-  modal.querySelector(".gpxposter__stats").textContent = statsLine(walk);
-  modal.querySelector(".gpxposter__profile").innerHTML = profileSvg(walk.elevation);
-  modal.classList.add("is-open");
-  document.body.style.overflow = "hidden";
-  document.addEventListener("keydown", onKeydown);
-
+// (Re)create the display map from the current theme/route settings.
+function renderDisplayMap(walk) {
   prepare().then(function () {
     if (modal._map) { modal._map.remove(); modal._map = null; }
     var mapEl = modal.querySelector(".gpxposter__map");
+    mapEl.textContent = "";
     var map = new maplibregl.Map({
       container: mapEl,
-      style: flatStyle(walk.coordinates, walk.accent),
+      style: flatStyle(walk.coordinates),
       interactive: false,
       attributionControl: false,
       fadeDuration: 0
@@ -442,6 +550,63 @@ function openPoster(walk) {
   }).catch(function () {
     modal.querySelector(".gpxposter__map").textContent = "Could not load the map library.";
   });
+}
+
+function applyFont() {
+  modal.querySelector(".gpxposter__frame").style
+    .setProperty("--gpxposter-font-scale", FONT_SCALES[SETTINGS.font] || 1);
+}
+
+function markActiveSegs() {
+  var btns = modal.querySelectorAll(".gpxposter__seg-btn");
+  Array.prototype.forEach.call(btns, function (b) {
+    var on = SETTINGS[b.getAttribute("data-setting")] === b.getAttribute("data-value");
+    b.classList.toggle("is-active", on);
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+  });
+}
+
+function changeSetting(setting, value) {
+  if (SETTINGS[setting] === value) return;
+  SETTINGS[setting] = value;
+  saveSettings();
+  markActiveSegs();
+  if (setting === "font") applyFont();
+  else if (modal._walk) renderDisplayMap(modal._walk); // theme or line width
+}
+
+function onModalClick(e) {
+  var seg = e.target.closest && e.target.closest(".gpxposter__seg-btn");
+  if (seg) { changeSetting(seg.getAttribute("data-setting"), seg.getAttribute("data-value")); return; }
+  var action = e.target.getAttribute("data-action");
+  if (action === "close") closeModal();
+  else if (action === "download") handleDownload(e.target);
+  else if (action === "caption") handleCaption(e.target);
+  else if (action === "settings") {
+    var panel = modal.querySelector(".gpxposter__settings");
+    panel.hidden = !panel.hidden;
+    e.target.classList.toggle("is-active", !panel.hidden);
+  }
+}
+
+function openPoster(walk) {
+  if (!walk || !walk.coordinates || walk.coordinates.length < 2) return;
+  if (!modal) {
+    modal = buildModal();
+    modal.addEventListener("click", onModalClick);
+  }
+
+  modal._walk = walk;
+  modal.querySelector(".gpxposter__title").textContent = walk.title || "";
+  modal.querySelector(".gpxposter__stats").textContent = statsLine(walk);
+  modal.querySelector(".gpxposter__profile").innerHTML = profileSvg(walk.elevation);
+  markActiveSegs();
+  applyFont();
+  modal.classList.add("is-open");
+  document.body.style.overflow = "hidden";
+  document.addEventListener("keydown", onKeydown);
+
+  renderDisplayMap(walk);
 }
 
 function handleDownload(btn) {

@@ -5,17 +5,17 @@
     </div>
   {{ end }}
 
-  {{ $profile := $.Site.Params.walks.elevationProfile | default true }}
+  {{ $profile := $.Site.Params.routes.elevationProfile | default true }}
   {{ $gpx := sort (.Resources.Match "*.gpx") "Name" "desc" }}
 
-  <div class="walks">
+  <div class="routes">
     {{ range $gpx }}
       <figure class="gpxmap"
               data-gpx="{{ .RelPermalink }}"
               data-name="{{ .Name }}"
               data-profile="{{ $profile }}"
               style="--gpxmap-height: 380px;">
-        <div class="gpxmap__map" role="img" aria-label="Walk route map"></div>
+        <div class="gpxmap__map" role="img" aria-label="Route map"></div>
         <figcaption class="gpxmap__meta">
           <span class="gpxmap__title"></span>
           <ul class="gpxmap__stats"></ul>
@@ -24,7 +24,7 @@
         </figcaption>
       </figure>
     {{ else }}
-      <p>No walks yet — check back soon.</p>
+      <p>No routes yet — check back soon.</p>
     {{ end }}
   </div>
 

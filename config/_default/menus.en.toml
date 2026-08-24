@@ -23,8 +23,8 @@
   pageRef = "research"
 
 [[main]]
-  name = "Walks"
-  pageRef = "walks"
+  name = "Routes"
+  pageRef = "routes"
 
 # [[main]]
 #   identifier = "Search"

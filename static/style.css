@@ -96,9 +96,9 @@
   }
 }
 
-/* -- Walks / GPX map -- */
+/* -- Routes / GPX map -- */
 
-.walks {
+.routes {
   display: flex;
   flex-direction: column;
   gap: 3rem;
@@ -230,7 +230,7 @@
   color: color-mix(in srgb, var(--foreground) 55%, transparent);
 }
 
-/* -- Walks poster (Instagram 9:16) -- */
+/* -- Routes poster (Instagram 9:16) -- */
 
 .gpxmap__poster-btn {
   margin-top: 1.25rem;
@@ -322,14 +322,15 @@
 .gpxposter__title {
   font-weight: 700;
   line-height: 1.15;
-  font-size: clamp(1.1rem, 3vh, 2.1rem);
+  overflow-wrap: break-word;
+  font-size: calc(clamp(1.1rem, 3vh, 2.1rem) * var(--gpxposter-font-scale, 1));
 }
 
 .gpxposter__stats {
   margin-top: 0.5rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.88);
-  font-size: clamp(0.75rem, 1.75vh, 1.15rem);
+  font-size: calc(clamp(0.75rem, 1.75vh, 1.15rem) * var(--gpxposter-font-scale, 1));
 }
 
 /* Line-only elevation profile below the caption, with a min/max y-axis. */
@@ -413,4 +414,68 @@
 .gpxposter__btn:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+.gpxposter__btn.is-active {
+  color: var(--background);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* Settings panel — theme / line / font. Minimal segmented controls. */
+.gpxposter__settings {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: min(94vw, 420px);
+  padding: 0.9rem 1rem;
+  border-radius: 8px;
+  background: rgba(20, 20, 24, 0.55);
+}
+
+.gpxposter__settings[hidden] {
+  display: none;
+}
+
+.gpxposter__setrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.gpxposter__setlabel {
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.gpxposter__seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.gpxposter__seg-btn {
+  padding: 0.35rem 0.7rem;
+  font: inherit;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.85);
+  background: transparent;
+  border: 0;
+  border-left: 1px solid rgba(255, 255, 255, 0.18);
+  cursor: pointer;
+}
+
+.gpxposter__seg-btn:first-child {
+  border-left: 0;
+}
+
+.gpxposter__seg-btn.is-active {
+  color: #11151c;
+  background: #fff;
 }
