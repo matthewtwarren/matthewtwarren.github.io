@@ -5,7 +5,7 @@ summary: "A weekly radio show and collaborative project by friends wishing to sh
 externalUrl: "https://monde-radio.com"
 showDate: false
 showReadingTime: false
-_build:
+build:
   render: "never"
   list: "local"
 

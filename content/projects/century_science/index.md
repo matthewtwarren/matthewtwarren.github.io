@@ -5,7 +5,7 @@ summary: "My first website -- a platform aimed at exploring my personal interest
 externalUrl: "https://centuryscience.wixsite.com/website-1"
 showDate: false
 showReadingTime: false
-_build:
+build:
   render: "never"
   list: "local"
 

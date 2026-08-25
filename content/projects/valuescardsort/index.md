@@ -5,7 +5,7 @@ summary: "A free and accessible web implementation of the values card sorting ex
 externalUrl: "https://valuescardsort.com"
 showDate: false
 showReadingTime: false
-_build:
+build:
   render: "never"
   list: "local"
 ---
