@@ -10,4 +10,4 @@ My research brings together data-driven modelling, structural bioinformatics, an
 
 I obtained my PhD in Interdisciplinary Biomedical Research from University of Warwick, followed by Postdoctoral research at University of Oxford, in collaboration with Boehringer Ingelheim.
 
-Alongside my [research](/research), I enjoy playing and mixing music, running and cycling on trails, and getting creative with new tech – check out my [projects](/projects) to see some examples of what I’ve been working on.
+Alongside my [research](/research), I enjoy playing and mixing music, [hiking, cycling and trail running](/routes), and messing around with tech – check out my [projects](/projects) to see some examples of what I’ve been working on.
