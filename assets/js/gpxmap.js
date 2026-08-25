@@ -379,7 +379,7 @@ function renderRoute(figureEl, parsed) {
 
   var fallback = fromFilename(figureEl.dataset.name || "");
   var date = stats.startTime || fallback.date;
-  var title = parsed.name || fallback.title;
+  var title = figureEl.dataset.title || parsed.name || fallback.title;
 
   var chips = buildStats(stats, date);
 

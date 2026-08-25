@@ -230,6 +230,19 @@
   color: color-mix(in srgb, var(--foreground) 55%, transparent);
 }
 
+/* Optional per-route description (from data/routes.yaml), clamped as a preview. */
+.gpxmap__desc {
+  margin-top: 1.1rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--foreground) 82%, transparent);
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* -- Routes poster (Instagram 9:16) -- */
 
 .gpxmap__actions {
