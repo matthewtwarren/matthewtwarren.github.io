@@ -470,7 +470,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  width: min(94vw, 420px);
+  width: min(94vw, 480px);
   padding: 0.9rem 1rem;
   border-radius: 8px;
   background: rgba(20, 20, 24, 0.55);
@@ -488,6 +488,8 @@
 }
 
 .gpxposter__setlabel {
+  flex: 0 0 auto;
+  white-space: nowrap;
   font-size: 0.75rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -504,7 +506,7 @@
 }
 
 .gpxposter__seg-btn {
-  padding: 0.35rem 0.7rem;
+  padding: 0.35rem 0.6rem;
   font: inherit;
   font-size: 0.78rem;
   color: rgba(255, 255, 255, 0.85);
