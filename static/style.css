@@ -232,8 +232,14 @@
 
 /* -- Routes poster (Instagram 9:16) -- */
 
-.gpxmap__poster-btn {
+.gpxmap__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
   margin-top: 1.25rem;
+}
+
+.gpxmap__poster-btn {
   padding: 0.35rem 0.9rem;
   font: inherit;
   font-size: 0.8rem;
@@ -315,7 +321,7 @@
   inset: auto 0 0 0;
   padding: 12% 6.5% 6%;
   background: linear-gradient(to top, rgba(20, 18, 16, 0.78), rgba(20, 18, 16, 0));
-  color: #fff;
+  color: var(--gpxposter-ink, #fff);
   pointer-events: none;
 }
 
@@ -329,7 +335,8 @@
 .gpxposter__stats {
   margin-top: 0.5rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--gpxposter-ink, #fff);
+  opacity: 0.9;
   font-size: calc(clamp(0.75rem, 1.75vh, 1.15rem) * var(--gpxposter-font-scale, 1));
 }
 
@@ -352,7 +359,8 @@
   justify-content: space-between;
   text-align: left;
   line-height: 1;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--gpxposter-ink, #fff);
+  opacity: 0.8;
   font-size: clamp(0.55rem, 1.2vh, 0.8rem);
 }
 
@@ -370,7 +378,8 @@
 
 .gpxposter__profile-svg polyline {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.92);
+  stroke: var(--gpxposter-ink, #fff);
+  stroke-opacity: 0.92;
   stroke-width: 2.5;
   stroke-linejoin: round;
   stroke-linecap: round;
@@ -383,8 +392,42 @@
   right: 2.5%;
   bottom: 1.2%;
   font-size: clamp(0.5rem, 1vh, 0.6rem);
-  color: rgba(255, 255, 255, 0.42);
+  color: var(--gpxposter-ink, #fff);
+  opacity: 0.45;
   pointer-events: none;
+}
+
+/* -- Poster: square, full-bleed map with the route centred and a translucent
+   caption band across the bottom. Print format. -- */
+.gpxposter--poster .gpxposter__frame {
+  --gpxposter-h: min(82vh, 92vw, 820px);
+  height: var(--gpxposter-h);
+  width: var(--gpxposter-h); /* square */
+}
+
+.gpxposter--poster .gpxposter__label {
+  padding: 7% 6% 6%;
+  background: color-mix(in srgb, var(--gpxposter-strip-bg, #f2e8d2) 72%, transparent);
+}
+
+.gpxposter--poster .gpxposter__credit {
+  right: 6%;
+  bottom: 2.5%;
+}
+
+/* Compact caption for the poster band. */
+.gpxposter--poster .gpxposter__title {
+  font-size: calc(clamp(0.95rem, 2.4vh, 1.6rem) * var(--gpxposter-font-scale, 1));
+}
+
+.gpxposter--poster .gpxposter__stats {
+  margin-top: 0.3rem;
+  font-size: calc(clamp(0.7rem, 1.5vh, 0.95rem) * var(--gpxposter-font-scale, 1));
+}
+
+.gpxposter--poster .gpxposter__profile {
+  height: clamp(26px, 4.5vh, 52px);
+  margin-top: 0.5rem;
 }
 
 .gpxposter__controls {

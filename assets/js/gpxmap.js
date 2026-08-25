@@ -281,11 +281,12 @@ function renderRoute(figureEl, gpxText) {
 }
 
 function enablePoster(figureEl) {
-  var btn = figureEl.querySelector(".gpxmap__poster-btn");
-  if (!btn) return;
-  btn.disabled = false;
-  btn.addEventListener("click", function () {
-    if (figureEl._walk) openPoster(figureEl._walk);
+  var btns = figureEl.querySelectorAll(".gpxmap__poster-btn");
+  Array.prototype.forEach.call(btns, function (btn) {
+    btn.disabled = false;
+    btn.addEventListener("click", function () {
+      if (figureEl._walk) openPoster(figureEl._walk, btn.getAttribute("data-format"));
+    });
   });
 }
 
