@@ -6,7 +6,7 @@
   {{ end }}
 
   {{ $profile := $.Site.Params.routes.elevationProfile | default true }}
-  {{ $gpx := sort (.Resources.Match "*.gpx") "Name" "desc" }}
+  {{ $gpx := sort (union (.Resources.Match "*.gpx") (.Resources.Match "*.fit")) "Name" "desc" }}
 
   <div class="routes">
     {{ range $gpx }}
