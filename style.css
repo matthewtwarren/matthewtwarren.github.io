@@ -522,3 +522,12 @@
   color: #11151c;
   background: #fff;
 }
+
+/* -- Mobile nav dropdown: keep page names on one line -- */
+.menu__dropdown {
+  min-width: 8rem;
+}
+
+.menu__dropdown > li a {
+  white-space: nowrap;
+}
