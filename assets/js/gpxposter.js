@@ -75,6 +75,21 @@ var THEMES = {
     contourThresholds: { 10: [100, 500], 11: [50, 250], 12: [25, 100], 13: [10, 50], 14: [10, 50], 15: [10, 50] },
     hillshade: { ex: 1.0, shadow: "#0d1217", highlight: "#586773", accent: "#333d48" },
     route: "#f0a93a", routeCasing: "#141a20"
+  },
+  // OpenTopoMap / Ordnance-Survey feel, like the topo card: near-white warm
+  // base, fine light-orange contours + soft relief, green only on woodland,
+  // a bright stream network, orange A-roads and an accent-blue route.
+  classic: {
+    bg: "#faf7f0",
+    water: "#b3cfe0", waterLine: "#6f9fce",
+    green: "#cfe0af", park: "#c1d99c",
+    greenOpacity: 0.7, parkOpacity: 0.6, woodOnly: true,
+    building: "#e6d3b0", buildingLine: "#cdb488",
+    roadMajor: "#e79640", roadMinor: "#d8c39c",
+    contour: "#d29a63", contourOpacity: 0.6, contourWidth: 0.75,
+    contourThresholds: { 10: [100, 500], 11: [50, 250], 12: [20, 100], 13: [10, 50], 14: [10, 50], 15: [10, 50] },
+    hillshade: { ex: 0.4, shadow: "#9a897b", highlight: "#ffffff", accent: "#b7a48f" },
+    route: "#002b8a", routeCasing: "#ffffff"
   }
 };
 
@@ -217,9 +232,11 @@ function flatStyle(coordinates) {
   var layers = [
     { id: "bg", type: "background", paint: { "background-color": t.bg } },
     { id: "landcover", type: "fill", source: "openmaptiles", "source-layer": "landcover",
+      // woodOnly themes (Classic) green just the woods, leaving open land light.
+      filter: t.woodOnly ? ["==", "class", "wood"] : ["has", "class"],
       paint: { "fill-color": t.green, "fill-opacity": t.greenOpacity } },
     { id: "landuse", type: "fill", source: "openmaptiles", "source-layer": "landuse",
-      paint: { "fill-color": t.green, "fill-opacity": t.greenOpacity * 0.72 } },
+      paint: { "fill-color": t.green, "fill-opacity": t.woodOnly ? 0 : t.greenOpacity * 0.72 } },
     { id: "park", type: "fill", source: "openmaptiles", "source-layer": "park",
       paint: { "fill-color": t.park, "fill-opacity": t.parkOpacity } },
     // Shaded relief over the vegetation for topographic depth.
@@ -233,7 +250,7 @@ function flatStyle(coordinates) {
     { id: "water", type: "fill", source: "openmaptiles", "source-layer": "water",
       paint: { "fill-color": t.water } },
     { id: "waterway", type: "line", source: "openmaptiles", "source-layer": "waterway",
-      paint: { "line-color": t.water, "line-width": lineWidth(1.2) } }
+      paint: { "line-color": t.waterLine || t.water, "line-width": lineWidth(1) } }
   ];
 
   // Contour lines (best-effort — only if mlcontour set up).
@@ -613,7 +630,7 @@ function buildModal() {
     '    <div class="gpxposter__credit">© OpenStreetMap · OpenMapTiles</div>' +
     '  </div>' +
     '  <div class="gpxposter__settings" hidden>' +
-    settingRow("Theme", "theme", [["paper", "Paper"], ["dark", "Dark"], ["vivid", "Vivid"], ["relief", "Relief"], ["slate", "Slate"]]) +
+    settingRow("Theme", "theme", [["paper", "Paper"], ["classic", "Classic"], ["dark", "Dark"], ["vivid", "Vivid"], ["relief", "Relief"], ["slate", "Slate"]]) +
     settingRow("Line", "route", [["thin", "Thin"], ["medium", "Medium"], ["thick", "Thick"]]) +
     settingRow("Font", "font", [["small", "S"], ["medium", "M"], ["large", "L"]]) +
     settingRow("Labels", "labels", [["on", "On"], ["off", "Off"]]) +
