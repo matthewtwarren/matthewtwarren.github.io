@@ -6,13 +6,15 @@
   {{ end }}
 
   {{ $profile := $.Site.Params.routes.elevationProfile | default true }}
-  {{ $gpx := sort (.Resources.Match "*.gpx") "Name" "desc" }}
+  {{ $gpx := sort (union (.Resources.Match "*.gpx") (.Resources.Match "*.fit")) "Name" "desc" }}
 
   <div class="routes">
     {{ range $gpx }}
+      {{ $meta := index $.Site.Data.routes .Name }}
       <figure class="gpxmap"
               data-gpx="{{ .RelPermalink }}"
               data-name="{{ .Name }}"
+              {{ with $meta.title }}data-title="{{ . }}"{{ end }}
               data-profile="{{ $profile }}"
               style="--gpxmap-height: 380px;">
         <div class="gpxmap__map" role="img" aria-label="Route map"></div>
@@ -20,6 +22,9 @@
           <span class="gpxmap__title"></span>
           <ul class="gpxmap__stats"></ul>
           <div class="gpxmap__profile" hidden></div>
+          {{ with $meta.description }}
+            <div class="gpxmap__desc">{{ . | markdownify | replaceRE "^\\s*<p>|</p>\\s*$" "" | safeHTML }}</div>
+          {{ end }}
           <div class="gpxmap__actions">
             <button type="button" class="gpxmap__poster-btn" data-format="reel" disabled>Reel</button>
             <button type="button" class="gpxmap__poster-btn" data-format="poster" disabled>Poster</button>

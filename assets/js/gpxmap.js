@@ -1,10 +1,12 @@
 /*
- * gpxmap.js — render a GPX track on an OpenTopoMap Leaflet map with computed
- * stats and an optional elevation profile. Dependency-free: parsing is done
- * with the browser's DOMParser, Leaflet is loaded separately from a CDN.
+ * gpxmap.js — render a GPS track (GPX or FIT) on an OpenTopoMap Leaflet map
+ * with computed stats and an optional elevation profile. Dependency-free:
+ * GPX is parsed with the browser's DOMParser, FIT with a small DataView
+ * decoder; Leaflet is loaded separately from a CDN.
  *
- * Public entry point: renderRoute(figureEl, gpxText) — kept separate from the
- * fetch/auto-init logic so a future upload tool can reuse the same engine.
+ * Entry point: renderRoute(figureEl, parsed) where parsed = { points, name }
+ * from parseGpx/parseFit — kept separate from fetch/auto-init so the engine
+ * is reusable.
  */
 
 import { openPoster } from "./gpxposter.js";
@@ -42,6 +44,126 @@ function parseGpx(text) {
     points: points,
     name: nameEl ? nameEl.textContent.trim() : ""
   };
+}
+
+/*
+ * parseFit — decode the GPS track from a .fit file (Coros/Garmin/ANT-FIT).
+ * Reads only `record` messages (global 20): position_lat/long (semicircles),
+ * altitude/enhanced_altitude, and timestamp (incl. compressed-timestamp
+ * headers). Dependency-free, via DataView. Returns the same shape as parseGpx.
+ */
+var FIT_EPOCH = 631065600; // FIT time base (1989-12-31 00:00:00 UTC) in Unix seconds
+
+function parseFit(buffer) {
+  var dv = new DataView(buffer);
+  var headerSize = dv.getUint8(0);
+  var dataSize = dv.getUint32(4, true);
+  var pos = headerSize;
+  var end = Math.min(headerSize + dataSize, dv.byteLength - 2); // trailing CRC
+
+  var defs = {};      // local message type -> definition
+  var lastTs = null;  // rolling timestamp for compressed headers
+  var records = [];
+
+  function readField(p, base, le) {
+    switch (base) {
+      case 0x85: return dv.getInt32(p, le);   // sint32
+      case 0x86: return dv.getUint32(p, le);  // uint32
+      case 0x84: return dv.getUint16(p, le);  // uint16
+      case 0x83: return dv.getInt16(p, le);   // sint16
+      case 0x01: return dv.getInt8(p);        // sint8
+      case 0x00: case 0x02: case 0x0a: return dv.getUint8(p);
+      case 0x88: return dv.getFloat32(p, le); // float32
+      default: return null;
+    }
+  }
+
+  function readData(def, isCompressed, timeOffset) {
+    var rec = {};
+    for (var i = 0; i < def.fields.length; i++) {
+      var f = def.fields[i];
+      rec[f.num] = readField(pos, f.base, def.le);
+      pos += f.size;
+    }
+    for (var j = 0; j < def.devFields.length; j++) pos += def.devFields[j].size;
+
+    if (isCompressed && lastTs != null) {
+      var prev = lastTs & 0x1f;
+      lastTs = timeOffset >= prev ? (lastTs - prev) + timeOffset
+                                  : (lastTs - prev) + timeOffset + 0x20;
+      rec[253] = lastTs;
+    } else if (rec[253] != null) {
+      lastTs = rec[253];
+    }
+    if (def.global === 20) records.push(rec);
+  }
+
+  while (pos < end) {
+    var h = dv.getUint8(pos++);
+    if (h & 0x80) {                       // compressed-timestamp data message
+      var def = defs[(h >> 5) & 0x3];
+      if (!def) break;
+      readData(def, true, h & 0x1f);
+    } else if (h & 0x40) {                // definition message
+      var localType = h & 0x0f;
+      pos++;                              // reserved
+      var le = dv.getUint8(pos++) === 0;  // architecture: 0 = little-endian
+      var global = dv.getUint16(pos, le); pos += 2;
+      var nFields = dv.getUint8(pos++);
+      var fields = [];
+      for (var k = 0; k < nFields; k++) {
+        var num = dv.getUint8(pos++), size = dv.getUint8(pos++), base = dv.getUint8(pos++);
+        fields.push({ num: num, size: size, base: base });
+      }
+      var devFields = [];
+      if (h & 0x20) {                     // developer fields
+        var nDev = dv.getUint8(pos++);
+        for (var d = 0; d < nDev; d++) {
+          dv.getUint8(pos++); var ds = dv.getUint8(pos++); dv.getUint8(pos++);
+          devFields.push({ size: ds });
+        }
+      }
+      defs[localType] = { le: le, global: global, fields: fields, devFields: devFields };
+    } else {                              // normal data message
+      var d2 = defs[h & 0x0f];
+      if (!d2) break;
+      readData(d2, false);
+    }
+  }
+
+  var SC = 180 / Math.pow(2, 31); // semicircles -> degrees
+  var points = [];
+  var lastEle = null;
+  for (var r = 0; r < records.length; r++) {
+    var rec = records[r];
+    var rawLat = rec[0], rawLon = rec[1];
+    if (rawLat == null || rawLon == null || rawLat === 0x7fffffff || rawLon === 0x7fffffff) {
+      continue;
+    }
+    var ele = null;
+    if (rec[78] != null && rec[78] !== 0xffffffff) ele = rec[78] / 5 - 500;
+    else if (rec[2] != null && rec[2] !== 0xffff) ele = rec[2] / 5 - 500;
+    if (ele == null) ele = lastEle; else lastEle = ele; // carry forward to fill gaps
+    points.push({
+      lat: rawLat * SC,
+      lon: rawLon * SC,
+      ele: ele,
+      time: rec[253] != null ? new Date((rec[253] + FIT_EPOCH) * 1000) : null
+    });
+  }
+
+  // Back-fill any leading points recorded before the first altitude fix, so the
+  // whole track has elevation (otherwise the profile/ascent are dropped).
+  var firstEle = null;
+  for (var q = 0; q < points.length; q++) {
+    if (points[q].ele != null) { firstEle = points[q].ele; break; }
+  }
+  if (firstEle != null) {
+    for (var q2 = 0; q2 < points.length && points[q2].ele == null; q2++) {
+      points[q2].ele = firstEle;
+    }
+  }
+  return { points: points, name: "" };
 }
 
 /* -- Metrics ------------------------------------------------------------- */
@@ -123,19 +245,30 @@ function formatDate(date) {
   });
 }
 
-// Derive a { date, title } fallback from a filename like
-// "2026-08-24-kinder-scout.gpx".
+// Derive a { date, title } fallback from a filename — either our convention
+// "2026-08-24-kinder-scout.gpx" or a watch export like
+// "SurreyTrailRun20260823101517.fit".
 function fromFilename(name) {
-  var base = name.replace(/\.gpx$/i, "");
-  var match = base.match(/^(\d{4})-(\d{2})-(\d{2})[-_]?(.*)$/);
+  var base = name.replace(/\.(gpx|fit)$/i, "");
   var date = null;
   var title = base;
-  if (match) {
-    date = new Date(Date.UTC(+match[1], +match[2] - 1, +match[3]));
-    title = match[4] || "";
+
+  var iso = base.match(/^(\d{4})-(\d{2})-(\d{2})[-_]?(.*)$/);
+  var stamp = base.match(/^(.*?)(\d{4})(\d{2})(\d{2})(\d{6})?$/); // NameYYYYMMDD[HHMMSS]
+
+  if (iso) {
+    date = new Date(Date.UTC(+iso[1], +iso[2] - 1, +iso[3]));
+    title = iso[4] || "";
+  } else if (stamp && +stamp[3] >= 1 && +stamp[3] <= 12 && +stamp[4] >= 1 && +stamp[4] <= 31) {
+    date = new Date(Date.UTC(+stamp[2], +stamp[3] - 1, +stamp[4]));
+    title = stamp[1] || "";
   }
-  title = title.replace(/[-_]+/g, " ").trim();
-  title = title.replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+
+  title = title
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2") // split CamelCase ("TrailRun" -> "Trail Run")
+    .replace(/[-_]+/g, " ")
+    .trim()
+    .replace(/\b\w/g, function (c) { return c.toUpperCase(); });
   return { date: date, title: title };
 }
 
@@ -238,16 +371,15 @@ function renderMap(mapEl, points, stats, accent) {
   return map;
 }
 
-function renderRoute(figureEl, gpxText) {
-  var parsed = parseGpx(gpxText);
+function renderRoute(figureEl, parsed) {
   if (parsed.points.length < 2) {
-    throw new Error("GPX file has no usable track");
+    throw new Error("Route file has no usable track");
   }
   var stats = computeStats(parsed.points);
 
   var fallback = fromFilename(figureEl.dataset.name || "");
   var date = stats.startTime || fallback.date;
-  var title = parsed.name || fallback.title;
+  var title = figureEl.dataset.title || parsed.name || fallback.title;
 
   var chips = buildStats(stats, date);
 
@@ -295,12 +427,15 @@ function enablePoster(figureEl) {
 function initFigure(figureEl) {
   var url = figureEl.dataset.gpx;
   if (!url) return;
+  var isFit = /\.fit(\?.*)?$/i.test(url);
   fetch(url)
     .then(function (res) {
-      if (!res.ok) throw new Error("Could not load GPX (" + res.status + ")");
-      return res.text();
+      if (!res.ok) throw new Error("Could not load route (" + res.status + ")");
+      return isFit ? res.arrayBuffer() : res.text();
     })
-    .then(function (text) { renderRoute(figureEl, text); })
+    .then(function (data) {
+      renderRoute(figureEl, isFit ? parseFit(data) : parseGpx(data));
+    })
     .catch(function (err) {
       var mapEl = figureEl.querySelector(".gpxmap__map");
       if (mapEl) {

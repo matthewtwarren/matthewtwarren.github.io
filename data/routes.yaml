@@ -1,0 +1,15 @@
+# Optional per-route metadata, keyed by the EXACT file name in content/routes/.
+# Add an entry only when you want a description or to override the auto-derived
+# title. All fields are optional. Markdown is supported in `description`.
+#
+#   2026-01-01-example.fit:
+#     title: "A nicer title"        # optional — overrides the name from the file
+#     description: >
+#       A short summary. **Bold** and _italic_ work. Shown on the card,
+#       clamped to a few lines as a preview.
+
+2026-08-15-llyn-y-fan-llyn-y-foel.gpx:
+  title: "Llyn Y Fan & Llyn Y Foel"
+  description: >
+    First part of a two-day circular hike, wild camping up on the ridge for beautiful
+    sunset views.

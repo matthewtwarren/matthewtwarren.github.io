@@ -19,7 +19,6 @@ var OFM_SOURCE = "https://tiles.openfreemap.org/planet";
 var OFM_GLYPHS = "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf";
 // Free, keyless terrain DEM (Terrarium encoding) for hillshade + contours.
 var DEM_TILES = "https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png";
-var ATTRIBUTION = "Map data © OpenStreetMap contributors, © OpenMapTiles";
 
 // Poster colour themes (single-word). Each defines the flat map palette, the
 // hillshade tint, the contour colour, and the route colours.
@@ -75,6 +74,21 @@ var THEMES = {
     contourThresholds: { 10: [100, 500], 11: [50, 250], 12: [25, 100], 13: [10, 50], 14: [10, 50], 15: [10, 50] },
     hillshade: { ex: 1.0, shadow: "#0d1217", highlight: "#586773", accent: "#333d48" },
     route: "#f0a93a", routeCasing: "#141a20"
+  },
+  // OpenTopoMap / Ordnance-Survey feel, like the topo card: near-white warm
+  // base, fine light-orange contours + soft relief, green only on woodland,
+  // a bright stream network, orange A-roads and an accent-blue route.
+  classic: {
+    bg: "#faf7f0",
+    water: "#aecfe6", waterLine: "#4f8fcf", waterWidth: 1.7,
+    green: "#cbe0a6", park: "#c1d99c",
+    greenOpacity: 0.85, parkOpacity: 0.6, woodOnly: true,
+    building: "#e6d3b0", buildingLine: "#cdb488",
+    roadMajor: "#e79640", roadMinor: "#d8c39c",
+    contour: "#c6863f", contourOpacity: 0.7, contourWidth: 0.9,
+    contourThresholds: { 10: [100, 500], 11: [50, 250], 12: [20, 100], 13: [10, 50], 14: [10, 50], 15: [10, 50] },
+    hillshade: { ex: 0.45, shadow: "#9a897b", highlight: "#ffffff", accent: "#b7a48f" },
+    route: "#002b8a", routeCasing: "#ffffff"
   }
 };
 
@@ -217,11 +231,14 @@ function flatStyle(coordinates) {
   var layers = [
     { id: "bg", type: "background", paint: { "background-color": t.bg } },
     { id: "landcover", type: "fill", source: "openmaptiles", "source-layer": "landcover",
+      // woodOnly themes (Classic) green just the woods, leaving open land light.
+      filter: t.woodOnly ? ["==", "class", "wood"] : ["has", "class"],
       paint: { "fill-color": t.green, "fill-opacity": t.greenOpacity } },
     { id: "landuse", type: "fill", source: "openmaptiles", "source-layer": "landuse",
-      paint: { "fill-color": t.green, "fill-opacity": t.greenOpacity * 0.72 } },
+      paint: { "fill-color": t.green, "fill-opacity": t.woodOnly ? 0 : t.greenOpacity * 0.72 } },
     { id: "park", type: "fill", source: "openmaptiles", "source-layer": "park",
-      paint: { "fill-color": t.park, "fill-opacity": t.parkOpacity } },
+      // woodOnly skips the (often huge) national-park polygon that washes the map green.
+      paint: { "fill-color": t.park, "fill-opacity": t.woodOnly ? 0 : t.parkOpacity } },
     // Shaded relief over the vegetation for topographic depth.
     { id: "hillshade", type: "hillshade", source: "dem",
       paint: {
@@ -233,7 +250,7 @@ function flatStyle(coordinates) {
     { id: "water", type: "fill", source: "openmaptiles", "source-layer": "water",
       paint: { "fill-color": t.water } },
     { id: "waterway", type: "line", source: "openmaptiles", "source-layer": "waterway",
-      paint: { "line-color": t.water, "line-width": lineWidth(1.2) } }
+      paint: { "line-color": t.waterLine || t.water, "line-width": lineWidth(t.waterWidth || 1) } }
   ];
 
   // Contour lines (best-effort — only if mlcontour set up).
@@ -613,7 +630,7 @@ function buildModal() {
     '    <div class="gpxposter__credit">© OpenStreetMap · OpenMapTiles</div>' +
     '  </div>' +
     '  <div class="gpxposter__settings" hidden>' +
-    settingRow("Theme", "theme", [["paper", "Paper"], ["dark", "Dark"], ["vivid", "Vivid"], ["relief", "Relief"], ["slate", "Slate"]]) +
+    settingRow("Theme", "theme", [["paper", "Paper"], ["classic", "Classic"], ["dark", "Dark"], ["vivid", "Vivid"], ["relief", "Relief"], ["slate", "Slate"]]) +
     settingRow("Line", "route", [["thin", "Thin"], ["medium", "Medium"], ["thick", "Thick"]]) +
     settingRow("Font", "font", [["small", "S"], ["medium", "M"], ["large", "L"]]) +
     settingRow("Labels", "labels", [["on", "On"], ["off", "Off"]]) +
@@ -621,7 +638,6 @@ function buildModal() {
     '  <div class="gpxposter__controls">' +
     '    <button type="button" class="gpxposter__btn gpxposter__btn--ghost" data-action="settings">Style</button>' +
     '    <button type="button" class="gpxposter__btn" data-action="download">Download</button>' +
-    '    <button type="button" class="gpxposter__btn" data-action="caption">Copy caption</button>' +
     '    <button type="button" class="gpxposter__btn gpxposter__btn--ghost" data-action="close">Close</button>' +
     '  </div>' +
     '</div>';
@@ -724,7 +740,6 @@ function onModalClick(e) {
   var action = e.target.getAttribute("data-action");
   if (action === "close") closeModal();
   else if (action === "download") handleDownload(e.target);
-  else if (action === "caption") handleCaption(e.target);
   else if (action === "settings") {
     var panel = modal.querySelector(".gpxposter__settings");
     panel.hidden = !panel.hidden;
@@ -766,22 +781,6 @@ function handleDownload(btn) {
     btn.disabled = false;
     btn.textContent = label;
   });
-}
-
-function handleCaption(btn) {
-  if (!modal._walk) return;
-  var walk = modal._walk;
-  var text = walk.title + "\n" + statsLine(walk) + "\n\n" + ATTRIBUTION;
-  var done = function () {
-    var label = btn.textContent;
-    btn.textContent = "Copied!";
-    setTimeout(function () { btn.textContent = label; }, 1500);
-  };
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    navigator.clipboard.writeText(text).then(done, done);
-  } else {
-    done();
-  }
 }
 
 export { openPoster };
