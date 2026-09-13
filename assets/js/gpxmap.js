@@ -48,9 +48,11 @@ function parseGpx(text) {
 
 /*
  * parseFit — decode the GPS track from a .fit file (Coros/Garmin/ANT-FIT).
- * Reads only `record` messages (global 20): position_lat/long (semicircles),
+ * Reads `record` messages (global 20): position_lat/long (semicircles),
  * altitude/enhanced_altitude, and timestamp (incl. compressed-timestamp
- * headers). Dependency-free, via DataView. Returns the same shape as parseGpx.
+ * headers), plus `session` messages (global 18) for the device's own
+ * total_distance. Dependency-free, via DataView. Returns the same shape as
+ * parseGpx, with `distance` in metres when the file records one.
  */
 var FIT_EPOCH = 631065600; // FIT time base (1989-12-31 00:00:00 UTC) in Unix seconds
 
@@ -64,6 +66,7 @@ function parseFit(buffer) {
   var defs = {};      // local message type -> definition
   var lastTs = null;  // rolling timestamp for compressed headers
   var records = [];
+  var sessions = [];
 
   function readField(p, base, le) {
     switch (base) {
@@ -96,6 +99,7 @@ function parseFit(buffer) {
       lastTs = rec[253];
     }
     if (def.global === 20) records.push(rec);
+    else if (def.global === 18) sessions.push(rec);
   }
 
   while (pos < end) {
@@ -163,7 +167,28 @@ function parseFit(buffer) {
       points[q2].ele = firstEle;
     }
   }
-  return { points: points, name: "" };
+
+  /*
+   * The watch's own odometer, in metres — session.total_distance (field 9),
+   * falling back to the last record's cumulative distance (field 5); both are
+   * centimetres. Prefer it over summing the track: great-circle hops between
+   * sampled points cut every corner and undershoot by a few tenths of a
+   * percent, and points recorded without a GPS fix are missing from the sum
+   * altogether. Multisport files carry one session per leg, so sum them.
+   */
+  var distance = 0;
+  for (var s = 0; s < sessions.length; s++) {
+    var total = sessions[s][9];
+    if (total != null && total !== 0xffffffff) distance += total / 100;
+  }
+  if (!distance) {
+    for (var t = records.length - 1; t >= 0; t--) {
+      var cum = records[t][5];
+      if (cum != null && cum !== 0xffffffff) { distance = cum / 100; break; }
+    }
+  }
+
+  return { points: points, name: "", distance: distance || null };
 }
 
 /* -- Metrics ------------------------------------------------------------- */
@@ -180,13 +205,18 @@ function haversine(a, b) {
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
-function computeStats(points) {
+// `recorded` is the device's own distance in metres, when the file carries one;
+// the summed track is only the fallback (see parseFit). `cumulative` stays
+// track-derived either way — it positions points along the elevation profile,
+// which normalises by its own last value.
+function computeStats(points, recorded) {
   var distance = 0;      // metres
   var cumulative = [0];  // metres, per point
   for (var i = 1; i < points.length; i++) {
     distance += haversine(points[i - 1], points[i]);
     cumulative.push(distance);
   }
+  if (recorded != null && isFinite(recorded) && recorded > 0) distance = recorded;
 
   var eles = points.map(function (p) { return p.ele; }).filter(function (e) {
     return e !== null && !isNaN(e);
@@ -375,7 +405,7 @@ function renderRoute(figureEl, parsed) {
   if (parsed.points.length < 2) {
     throw new Error("Route file has no usable track");
   }
-  var stats = computeStats(parsed.points);
+  var stats = computeStats(parsed.points, parsed.distance);
 
   var fallback = fromFilename(figureEl.dataset.name || "");
   var date = stats.startTime || fallback.date;
