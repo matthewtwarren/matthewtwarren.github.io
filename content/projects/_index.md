@@ -9,5 +9,6 @@ cascade:
   groupByYear: false
 ---
 
+{{< lead >}}
 Projects I've released or contributed to.
-
+{{< /lead >}}

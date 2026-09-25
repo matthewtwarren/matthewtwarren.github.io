@@ -9,7 +9,11 @@ showTableOfContents: false
 layout: "simple"
 ---
 
-My research interests lie in developing data-driven methods and models to accelerate drug discovery. Currently, this is focussed on identifying new drug targets and molecules for cancer therapies via targeted protein degradation.
+{{< lead >}}
+My research sits at the intersection of ML, structural bioinformatics, and drug discovery.
+{{< /lead >}}
+
+Currently focused around targeted protein degradation, I develop structure-based models and multi-omics pipelines to predict glue-induced protein–protein interactions, identify clinical oncology targets, and guide decision making in drug discovery.
 
 <br>
 
